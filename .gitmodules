@@ -1,6 +1,6 @@
 [submodule "app/src/main/jni/breadwallet-core"]
 	path = app/src/main/jni/breadwallet-core
-	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core
+	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core/tree/master
 
 [submodule "app/src/main/secp/secp256k1"]
 	path = app/src/main/secp/secp256k1
