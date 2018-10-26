@@ -1,3 +1,4 @@
 [submodule "app/src/main/jni/breadwallet-core"]
 	path = app/src/main/jni/breadwallet-core
 	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core.git
+	branch = master
