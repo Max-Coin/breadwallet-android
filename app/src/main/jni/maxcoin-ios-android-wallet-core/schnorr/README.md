@@ -1,1 +1,0 @@
-# schnorr-secp256r1
