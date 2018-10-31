@@ -2,9 +2,4 @@
 	path = app/src/main/jni/maxcoin-ios-android-wallet-core
 	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core
 	branch = master
-[submodule "app/src/main/jni/maxcoin-ios-android-wallet-core/secp256k1"]
-	path = app/src/main/jni/maxcoin-ios-android-wallet-core/secp256k1
-	url = https://github.com/bitcoin-core/secp256k1.git
-[submodule "app/src/main/jni/maxcoin-ios-android-wallet-core/schnorr"]
-	path = app/src/main/jni/maxcoin-ios-android-wallet-core/schnorr
-	url = https://github.com/Max-Coin/schnorr-secp256r1.git
+
