@@ -36,6 +36,7 @@ import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.kvstore.RemoteKVStore;
@@ -49,8 +50,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -88,18 +91,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxItem> backUpFeed;
     private List<TxItem> itemFeed;
+    //    private Map<String, TxMetaData> mds;
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
+    private boolean updatingReverseTxHash;
+    private boolean updatingData;
 
-    private boolean updatingMetadata;
+//    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         this.txResId = R.layout.tx_item;
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
+        items = new ArrayList<>();
         init(items);
+//        updateMetadata();
     }
 
     public void setItems(List<TxItem> items) {
@@ -107,41 +115,74 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void init(List<TxItem> items) {
-        Log.e(TAG, "init: ");
         if (items == null) items = new ArrayList<>();
+        if (itemFeed == null) itemFeed = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
-        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
+//        if (mds == null) mds = new HashMap<>();
+//        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
+        updateTxHashes();
+
 //        if (updateMetadata)
 //            updateMetadata();
     }
 
-    //update metadata ONLY when the feed is different than the new one
-    private void updateMetadata() {
-        if (updatingMetadata) return;
-        updatingMetadata = true;
-        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+    public void updateData() {
+        if (updatingData) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                long start = System.currentTimeMillis();
-                for (int i = 0; i < backUpFeed.size(); i++) {
-                    TxItem item = backUpFeed.get(i);
-                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.metaData = md;
+                long s = System.currentTimeMillis();
+                List<TxItem> newItems = new ArrayList<>(itemFeed);
+                TxItem item;
+                for (int i = 0; i < newItems.size(); i++) {
+                    item = newItems.get(i);
+                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    item.txReversed = Utils.reverseHex(Utils.bytesToHex(item.getTxHash()));
+
                 }
-                for (int i = 0; i < itemFeed.size(); i++) {
-                    TxItem item = itemFeed.get(i);
-                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.metaData = md;
-                }
-                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
-                updatingMetadata = false;
-                TxManager.getInstance().updateTxList(mContext);
+                backUpFeed = newItems;
+                String log = String.format("newItems: %d, took: %d", newItems.size(), (System.currentTimeMillis() - s));
+                Log.e(TAG, "updateData: " + log);
+                updatingData = false;
             }
         });
+
     }
+
+    private void updateTxHashes() {
+        if (updatingReverseTxHash) return;
+        updatingReverseTxHash = true;
+
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (int i = 0; i < itemFeed.size(); i++)
+//                    itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
+//                for (int i = 0; i < backUpFeed.size(); i++)
+//                    backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
+//                updatingReverseTxHash = false;
+//            }
+//        });
+    }
+
+    //update metadata ONLY when the feed is different than the new one
+//    private void updateMetadata() {
+//        if (updatingMetadata) return;
+//        updatingMetadata = true;
+//        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                long start = System.currentTimeMillis();
+//                mds = KVStoreManager.getInstance().getAllTxMD(mContext);
+//                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
+//                updatingMetadata = false;
+//                TxManager.getInstance().updateTxList(mContext);
+//            }
+//        });
+//    }
 
     public List<TxItem> getItems() {
         return itemFeed;
@@ -206,7 +247,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         } else {
-            Log.e(TAG, "setTexts: MEMO:" + commentString);
             if (convertView.constraintLayout.indexOfChild(convertView.comment) == -1)
                 convertView.constraintLayout.addView(convertView.comment);
             ConstraintSet set = new ConstraintSet();
@@ -223,6 +263,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
         convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
+//        final String addr = position == 1? "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" : "35SwXe97aPRUsoaUTH1Dr3SB7JptH39pDZ"; //testing
         final String addr = item.getTo()[0];
         convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
@@ -354,16 +395,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
 
-        final List<TxItem> filteredList = new LinkedList<>();
-//        TxMetaData metaData;
+        final List<TxItem> filteredList = new ArrayList<>();
+        TxItem item;
         for (int i = 0; i < backUpFeed.size(); i++) {
-            TxItem item = backUpFeed.get(i);
-//            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-            if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
-                    || item.getFrom()[0].toLowerCase().contains(lowerQuery)
-                    || item.getTo()[0].toLowerCase().contains(lowerQuery)
-                    || (item.metaData != null && item.metaData.comment != null
-                    && item.metaData.comment.toLowerCase().contains(lowerQuery))) {
+            item = backUpFeed.get(i);
+            boolean matchesHash = item.getTxHashHexReversed() != null && item.getTxHashHexReversed().contains(lowerQuery);
+            boolean matchesAddress = item.getFrom()[0].contains(lowerQuery) || item.getTo()[0].contains(lowerQuery);
+            boolean matchesMemo = item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery);
+            if (matchesHash || matchesAddress || matchesMemo) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {
@@ -378,12 +417,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     }
 
                     int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
-                    //filter by pending and this is complete
+                    //complete
                     if (switches[2] && confirms >= 6) {
                         willAdd = false;
                     }
 
-                    //filter by completed and this is pending
+                    //pending
                     if (switches[3] && confirms < 6) {
                         willAdd = false;
                     }

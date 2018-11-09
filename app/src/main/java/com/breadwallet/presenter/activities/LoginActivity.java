@@ -39,6 +39,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
+import org.junit.Assert;
+
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
@@ -180,7 +182,8 @@ public class LoginActivity extends BRActivity {
                     AuthManager.getInstance().authPrompt(LoginActivity.this, "", "", false, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(LoginActivity.this, false);
+//                            AuthManager.getInstance().authSuccess(LoginActivity.this);
+                            unlockWallet();
                         }
 
                         @Override
@@ -197,7 +200,7 @@ public class LoginActivity extends BRActivity {
                 if (fingerPrint != null && BRSharedPrefs.getUseFingerprint(LoginActivity.this))
                     fingerPrint.performClick();
             }
-        }, 600);
+        }, 500);
 
     }
 
@@ -205,6 +208,7 @@ public class LoginActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         updateDots();
+
         appVisible = true;
         app = this;
         inputAllowed = true;
@@ -307,7 +311,6 @@ public class LoginActivity extends BRActivity {
     }
 
     private void updateDots() {
-
         AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_white,
                 new AuthManager.OnPinSuccess() {
                     @Override

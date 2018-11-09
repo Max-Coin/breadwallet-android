@@ -353,12 +353,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     txCount = BRWalletTransactions(_wallet, transactions_sqlite, txCount);
 
     //Find the class and populate the array of objects of this class
-    jclass txClass = (*env)->FindClass(env,
-                                       "com/breadwallet/presenter/entities/TxItem");
+    jclass txClass = (*env)->FindClass(env, "com/breadwallet/presenter/entities/TxItem");
     jobjectArray txObjects = (*env)->NewObjectArray(env, (jsize) txCount, txClass, 0);
     jobjectArray globalTxs = (*env)->NewGlobalRef(env, txObjects);
-    jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>",
-                                             "(JI[BJJJ[Ljava/lang/String;[Ljava/lang/String;JI[JZ)V");
+    jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>", "(JI[BLjava/lang/String;JJJ[Ljava/lang/String;[Ljava/lang/String;JI[JZ)V");
     jclass stringClass = (*env)->FindClass(env, "java/lang/String");
 
     for (int i = 0; i < txCount; i++) {
@@ -423,7 +421,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jlong JbalanceAfterTx = (jlong) BRWalletBalanceAfterTx(_wallet, tempTx);
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
-                                             JtxHash, Jsent,
+                                             JtxHash, NULL,Jsent,
                                              Jreceived, Jfee, JtoAddresses, JfromAddresses,
                                              JbalanceAfterTx, JtxSize,
                                              JoutAmounts, isValid);
@@ -860,6 +858,24 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
 
     return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 }
+JNIEXPORT jstring JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thiz,
+                                                        jbyteArray txHash) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "txHashToHex");
+
+//    int hashLen = (*env)->GetArrayLength(env, txHash);
+    jbyte *hash = (*env)->GetByteArrayElements(env, txHash, 0);
+
+    UInt256 reversedHash = UInt256Reverse((*(UInt256 *) hash));
+
+//    const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
+//    UInt256 theHash = u256_hex_decode(rawString);
+//    UInt256 reversedHash = UInt256Reverse(theHash);
+//
+    return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+}
+
+
 
 JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,
@@ -976,7 +992,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
     txCount = BRWalletTransactions(_wallet, transactions, txCount);
     w = BRWalletNew(transactions, txCount, pubKey);
     jlong balance = (jlong) BRWalletBalance(w);
-    BRWalletFree(w);
+//    BRWalletFree(w);
 //
     return balance;
 }

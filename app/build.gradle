@@ -9,8 +9,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 151
-        versionName "151"
+        versionCode 161
+        versionName "161"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -90,12 +90,14 @@ android {
 
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
-        quiet = false
-        explainIssues = true
+        quiet false
+        explainIssues true
         // if true, stop the gradle build if errors are found
-        abortOnError = true
+        abortOnError true
         // if true, only report errors
-        ignoreWarnings = false
+        ignoreWarnings false
+
+        checkReleaseBuilds false
 
         disable 'MissingTranslation'
     }
