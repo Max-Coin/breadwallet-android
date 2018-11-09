@@ -27,39 +27,41 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/jni/breadwallet-core/BRAddress.c
-             src/main/jni/breadwallet-core/BRAddress.h
-             src/main/jni/breadwallet-core/BRArray.h
-             src/main/jni/breadwallet-core/BRBase58.c
-             src/main/jni/breadwallet-core/BRBase58.h
-             src/main/jni/breadwallet-core/BRBIP32Sequence.c
-             src/main/jni/breadwallet-core/BRBIP32Sequence.h
-             src/main/jni/breadwallet-core/BRBIP38Key.c
-             src/main/jni/breadwallet-core/BRBIP38Key.h
-             src/main/jni/breadwallet-core/BRBIP39Mnemonic.c
-             src/main/jni/breadwallet-core/BRBIP39Mnemonic.h
-             src/main/jni/breadwallet-core/BRBIP39WordsEn.h
-             src/main/jni/breadwallet-core/BRBloomFilter.c
-             src/main/jni/breadwallet-core/BRBloomFilter.h
-             src/main/jni/breadwallet-core/BRCrypto.c
-             src/main/jni/breadwallet-core/BRCrypto.h
-             src/main/jni/breadwallet-core/BRInt.h
-             src/main/jni/breadwallet-core/BRKey.c
-             src/main/jni/breadwallet-core/BRKey.h
-             src/main/jni/breadwallet-core/BRMerkleBlock.c
-             src/main/jni/breadwallet-core/BRMerkleBlock.h
-             src/main/jni/breadwallet-core/BRPaymentProtocol.c
-             src/main/jni/breadwallet-core/BRPaymentProtocol.h
-             src/main/jni/breadwallet-core/BRPeer.c
-             src/main/jni/breadwallet-core/BRPeer.h
-             src/main/jni/breadwallet-core/BRPeerManager.c
-             src/main/jni/breadwallet-core/BRPeerManager.h
-             src/main/jni/breadwallet-core/BRSet.c
-             src/main/jni/breadwallet-core/BRSet.h
-             src/main/jni/breadwallet-core/BRTransaction.c
-             src/main/jni/breadwallet-core/BRTransaction.h
-             src/main/jni/breadwallet-core/BRWallet.c
-             src/main/jni/breadwallet-core/BRWallet.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRAddress.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRAddress.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRArray.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBase58.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBase58.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP32Sequence.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP32Sequence.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP38Key.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP38Key.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP39Mnemonic.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP39Mnemonic.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBIP39WordsEn.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBloomFilter.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRBloomFilter.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRCrypto.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRCrypto.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRInt.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRKeccak.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRKeccak.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRKey.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRKey.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRMerkleBlock.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRMerkleBlock.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPaymentProtocol.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPaymentProtocol.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPeer.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPeer.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPeerManager.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRPeerManager.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRSet.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRSet.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRTransaction.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRTransaction.h
+             src/main/jni/maxcoin-ios-android-wallet-core/BRWallet.c
+             src/main/jni/maxcoin-ios-android-wallet-core/BRWallet.h
 
              src/main/jni/transition/core.c
              src/main/jni/transition/core.h
@@ -72,14 +74,20 @@ add_library( # Specifies the name of the library.
              src/main/jni/transition/PeerManager.c
              src/main/jni/transition/PeerManager.h
              src/main/jni/transition/wallet.c
-             src/main/jni/transition/wallet.h)
+             src/main/jni/transition/wallet.h
+             src/main/jni/maxcoin-ios-android-wallet-core/schnorr/Schnorr.cpp
+             src/main/jni/maxcoin-ios-android-wallet-core/schnorr/Schnorr.h
+             )
 
 
-include_directories(src/main/jni/breadwallet-core/)
-include_directories(src/main/secp/secp256k1/include/)
-include_directories(src/main/secp/secp256k1/src/)
-include_directories(src/main/secp/secp256k1/)
-include_directories(src/main/secp/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/secp256k1/include/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/secp256k1/src/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/secp256k1/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/schnorr/)
+include_directories(src/main/jni/maxcoin-ios-android-wallet-core/schnorr/cryptopp)
+
+
 
 # add lib dependencies
 target_link_libraries(

@@ -1,3 +1,5 @@
 [submodule "app/src/main/jni/maxcoin-ios-android-wallet-core"]
 	path = app/src/main/jni/maxcoin-ios-android-wallet-core
-	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core.git
+	url = https://github.com/Max-Coin/maxcoin-ios-android-wallet-core
+	branch = master
+
